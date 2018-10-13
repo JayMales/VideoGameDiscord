@@ -1,17 +1,17 @@
-import discord, json, asyncio,random,datetime
+import discord,json,asyncio,random,datetime
 from discord.ext.commands import Bot
 from discord.ext import commands
 from tinydb import TinyDB, Query, where
 from tinydb.operations import delete,increment
 from imgurpython import ImgurClient
-from key import KEY
+from key import KEY,client_id_key, client_secret_key
 
 db = TinyDB('data.json')
 users = db.table('User')
 querys = Query()
 public_channel = None
-client_id = '78015b27b471d83'
-client_secret = '56b22c0678587e7ce2c6a23e34637a3493f3097a'
+client_id = client_id_key
+client_secret = client_secret_key
 
 imgur = ImgurClient(client_id, client_secret)
 client = discord.Client()
@@ -25,10 +25,10 @@ async def on_ready():
 	if db.all() == []:
 		createdb()
 		print('Recreated The Database.')
-	for channel in client.get_all_channels():
-		if type(channel) == discord.channel.TextChannel:
+	for cchannel in client.get_all_channels():
+		if type(cchannel) == discord.channel.TextChannel:
 				global public_channel
-				public_channel = channel
+				public_channel = cchannel
 	
 @client.event
 async def on_message(message):
