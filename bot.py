@@ -1,4 +1,7 @@
 import discord,json,asyncio,random,datetime
+from actions import Meme
+from discord.ext.commands import Bot
+from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext import commands
 from tinydb import TinyDB, Query, where
@@ -17,6 +20,7 @@ imgur = ImgurClient(client_id, client_secret)
 client = discord.Client()
 bot_prefix= "s."
 client = commands.Bot(command_prefix=bot_prefix)
+theActions={}
 
 @client.event
 async def on_ready():
@@ -29,6 +33,7 @@ async def on_ready():
 		if type(cchannel) == discord.channel.TextChannel:
 				global public_channel
 				public_channel = cchannel
+	theActions["meme"]=Meme.Meme("Meme poster","meme","Posts random memes from imgur",client,imgur)
 	
 @client.event
 async def on_message(message):
@@ -43,7 +48,7 @@ async def on_message(message):
 	if(message.content.startswith(bot_prefix+"pick")):
 		await message.channel.send(pick(message))
 	if(message.content.startswith(bot_prefix+"meme")):
-		await message.channel.send(meme())
+		await message.channel.send(theActions["meme"].process())
 	if(message.content.startswith(bot_prefix+"kys")):
 		authr = kys(message)
 		await authr.create_dm()
@@ -61,13 +66,6 @@ def hi():
 	if(rand==0):
 		micheal = "Hey Micheal, Vsause here!"
 	return micheal
-	
-def meme():
-	ran = 0
-	ran = random.randrange(3)
-	items = imgur.gallery(section='top', sort='time', page=ran, window='week', show_viral=False)
-	ran = random.randrange(len(items))
-	return items[ran].link
 
 def pick(msg):
 	msg = msg.content
@@ -125,4 +123,5 @@ def createdb():
 	db.insert({'fact':'Jumping spiders dont have strong muscle legs. They jump by contracting muscles in their abdomen, which forces liquid into their back legs. The back legs then straighten, which catapults the spider forward.'})
 	db.insert({'fact':'Spiders have 48 knees.'})
 
-client.run(KEY)
+if __name__ == "__main__":
+	client.run(KEY)
