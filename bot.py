@@ -1,7 +1,5 @@
 import discord,json,asyncio,random,datetime
-from actions import Meme
-from discord.ext.commands import Bot
-from discord.ext import commands
+from actions import Meme,Hi,Pick,Oof,SpiderFacts,Help
 from discord.ext.commands import Bot
 from discord.ext import commands
 from tinydb import TinyDB, Query, where
@@ -33,57 +31,35 @@ async def on_ready():
 		if type(cchannel) == discord.channel.TextChannel:
 				global public_channel
 				public_channel = cchannel
-	theActions["meme"]=Meme.Meme("Meme poster","meme","Posts random memes from imgur",client,imgur)
+	theActions["meme"]=Meme.Meme("Meme poster","meme","Posts random memes from imgur","",client,imgur)
+	theActions["hi"]=Hi.Hi("Say Hi","hi","Posts picture of darcy's face","",client)
+	theActions["pick"]=Pick.Pick("Random Pick","pick","Randomly picks 1 of the things you put in.","1,two,three,4",client)
+	theActions["oof"]=Oof.Oof("Oof","oof","Says oof a random many amount of time","",client)
+	theActions["spider"]=SpiderFacts.SpiderFacts("Spider Facts","spider","Says a spider fact","",client,db)
+	theActions["help"]=Help.Help("Help Menu","help","Sends you the help Menu","",client,theActions)
 	
 @client.event
 async def on_message(message):
-	if(message.content.startswith(bot_prefix+"oof")):
-		await message.channel.send(oof(), tts=True)
-	if(message.content.startswith(bot_prefix+"hi")):
-		await message.channel.send(hi(), tts=True)
-		await message.channel.send(file = discord.File('hi.jpg'))
-		await message.channel.send("Yikes!", tts=True)
-	if(message.content.startswith(bot_prefix+"spider")):
-		await message.channel.send(facts(), tts=True)
-	if(message.content.startswith(bot_prefix+"pick")):
-		await message.channel.send(pick(message))
-	if(message.content.startswith(bot_prefix+"meme")):
-		await message.channel.send(theActions["meme"].process())
-	if(message.content.startswith(bot_prefix+"kys")):
-		authr = kys(message)
-		await authr.create_dm()
-		await authr.dm_channel.send("kill yourself")
+	if(message.content.startswith(bot_prefix)):
+		command = message.content.split(' ')[0]
+		command = command.split('.')[1]
+		try:
+			await theActions[command].process(message)
+		except:
+			await message.channel.send("command not found")
+			await theActions["help"].process(message)
+		
+	
+	#if(message.content.startswith(bot_prefix+"kys")):
+	#	authr = kys(message)
+	#	await authr.create_dm()
+	#	await authr.dm_channel.send("kill yourself")
 
 @client.event
 async def on_member_join(member):
 	print("New memeber has joined the channel")
 	role = discord.utils.get(member.guild.roles, name="Unity")
 	await member.add_roles(role)
-		
-def hi():
-	micheal = "Hey Vsause, Micheal here!"
-	rand = random.randint(0, 2)
-	if(rand==0):
-		micheal = "Hey Micheal, Vsause here!"
-	return micheal
-
-def pick(msg):
-	msg = msg.content
-	msg = msg[6:].split(',')
-	rand = random.randint(0, len(msg)-1)
-	return msg[rand].strip()
-
-def facts():
-	rand = random.randint(0, len(db.all())-1)
-	print("fact: "+str(rand))
-	return db.search(querys.fact.exists())[rand]['fact']
-
-def oof():
-	ran = random.randrange(30)
-	oof ="oof "
-	for num in range(0, ran):
-		oof = oof +"oof "
-	return oof
 
 def kys(msg):
 	authr = msg.author
