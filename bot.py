@@ -40,6 +40,10 @@ async def on_ready():
 	
 @client.event
 async def on_message(message):
+	try:
+		await message.author.create_dm()
+	except:
+		pass
 	if(message.content.startswith(bot_prefix)):
 		command = message.content.split(' ')[0]
 		command = command.split('.')[1]
@@ -48,12 +52,6 @@ async def on_message(message):
 		except:
 			await message.channel.send("command not found")
 			await theActions["help"].process(message)
-		
-	
-	#if(message.content.startswith(bot_prefix+"kys")):
-	#	authr = kys(message)
-	#	await authr.create_dm()
-	#	await authr.dm_channel.send("kill yourself")
 
 @client.event
 async def on_member_join(member):
@@ -61,13 +59,6 @@ async def on_member_join(member):
 	role = discord.utils.get(member.guild.roles, name="Unity")
 	await member.add_roles(role)
 
-def kys(msg):
-	authr = msg.author
-	for members in msg.channel.members:
-		if members.name == msg.content[6:]:
-			authr = members
-	return authr
-	
 #@client.listen()
 #async def on_member_update(before, after):
 #	if after.activity is not None:
