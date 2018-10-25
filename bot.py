@@ -1,5 +1,5 @@
 import discord,json,asyncio,random,datetime
-from actions import Meme,Hi,Pick,Oof,SpiderFacts,Help
+from actions import Meme,Hi,Pick,Oof,SpiderFacts,Help,Clean
 from discord.ext.commands import Bot
 from discord.ext import commands
 from tinydb import TinyDB, Query, where
@@ -36,7 +36,9 @@ async def on_ready():
 	theActions["pick"]=Pick.Pick("Random Pick","pick","Randomly picks 1 of the things you put in.","1,two,three,4",client)
 	theActions["oof"]=Oof.Oof("Oof","oof","Says oof a random many amount of time","",client)
 	theActions["spider"]=SpiderFacts.SpiderFacts("Spider Facts","spider","Says a spider fact","",client,db)
+	theActions["clean"]=Clean.Clean("Help Menu","clean","Sends you the help Menu","",client,bot_prefix)
 	theActions["help"]=Help.Help("Help Menu","help","Sends you the help Menu","",client,theActions)
+	
 	
 @client.event
 async def on_message(message):
@@ -47,11 +49,11 @@ async def on_message(message):
 	if(message.content.startswith(bot_prefix)):
 		command = message.content.split(' ')[0]
 		command = command.split('.')[1]
-		try:
-			await theActions[command].process(message)
-		except:
-			await message.channel.send("command not found")
-			await theActions["help"].process(message)
+		#try:
+		await theActions[command].process(message)
+		#except:
+		#	await message.channel.send("command not found")
+		#	await theActions["help"].process(message)
 
 @client.event
 async def on_member_join(member):
