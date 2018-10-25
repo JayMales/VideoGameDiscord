@@ -14,4 +14,4 @@ class Help(Action.Action):
 			help.append(self.theActions[key])
 		#asyncio.ensure_future(message.author.create_dm())
 		asyncio.ensure_future(message.author.dm_channel.send('\n'.join(map(str, help))))
-		#asyncio.ensure_future(message.channel.send("Sent you the help menu, check your dms"))
+		asyncio.ensure_future(message.channel.send("Sent you the help menu, check your dms"))
