@@ -49,11 +49,11 @@ async def on_message(message):
 	if(message.content.startswith(bot_prefix)):
 		command = message.content.split(' ')[0]
 		command = command.split('.')[1]
-		#try:
-		await theActions[command].process(message)
-		#except:
-		#	await message.channel.send("command not found")
-		#	await theActions["help"].process(message)
+		try:
+			await theActions[command].process(message)
+		except:
+			await message.channel.send("command not found")
+			await theActions["help"].process(message)
 
 @client.event
 async def on_member_join(member):
