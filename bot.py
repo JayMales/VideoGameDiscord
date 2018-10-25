@@ -36,7 +36,7 @@ async def on_ready():
 	theActions["pick"]=Pick.Pick("Random Pick","pick","Randomly picks 1 of the things you put in.","1,two,three,4",client)
 	theActions["oof"]=Oof.Oof("Oof","oof","Says oof a random many amount of time","",client)
 	theActions["spider"]=SpiderFacts.SpiderFacts("Spider Facts","spider","Says a spider fact","",client,db)
-	theActions["clean"]=Clean.Clean("Help Menu","clean","Sends you the help Menu","",client,bot_prefix)
+	theActions["clean"]=Clean.Clean("Clean Chat","clean","Removes all commands to do with the bot","",client,bot_prefix)
 	theActions["help"]=Help.Help("Help Menu","help","Sends you the help Menu","",client,theActions)
 	
 	
