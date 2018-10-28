@@ -1,7 +1,7 @@
 import discord,json,asyncio
 from discord.ext import commands
 import sys, traceback
-from key import KEY
+from key import KEY, PREF
 
 public_channel = None
 
@@ -9,7 +9,7 @@ def get_prefix(bot, message):
     """A callable Prefix for our bot. This could be edited to allow per server prefixes."""
 
     # Notice how you can use spaces in prefixes. Try to keep them simple though.
-    prefixes = ['s.']
+    prefixes = PREF
 
     # Check to see if we are outside of a guild. e.g DM's etc.
     if not message.guild:
@@ -45,5 +45,4 @@ async def on_ready():
 				public_channel = cchannel
 				
 
-if __name__ == "__main__":
-	bot.run(KEY, bot=True, reconnect=True)
+bot.run(KEY, bot=True, reconnect=True)
