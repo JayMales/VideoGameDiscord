@@ -40,7 +40,7 @@ async def on_ready():
 	await bot.change_presence(game=discord.Game(name='Rewrite Time Boii'))
 	print(f'Successfully logged in and booted...!')
 	for cchannel in bot.get_all_channels():
-		if type(cchannel) == discord.channel.TextChannel:
+		if type(cchannel) == discord.TextChannel:
 				global public_channel
 				public_channel = cchannel
 				
