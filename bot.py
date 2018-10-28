@@ -20,7 +20,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-initial_extensions = ['cogs.template']
+initial_extensions = ['cogs.template','cogs.memes','cogs.mod']
 
 bot = commands.Bot(command_prefix=get_prefix, description='A Rewrite Cog Example')
 
@@ -37,12 +37,12 @@ if __name__ == '__main__':
 async def on_ready():
 	print(f'\n\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
 	# Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
-	await bot.change_presence(game=discord.Game(name='Rewrite Time Boii'))
+	game = discord.Game("Rewrite Time Boii")
+	await bot.change_presence(activity=game)
 	print(f'Successfully logged in and booted...!')
 	for cchannel in bot.get_all_channels():
 		if type(cchannel) == discord.TextChannel:
 				global public_channel
-				public_channel = cchannel
-				
+				public_channel = cchannel			
 
 bot.run(KEY, bot=True, reconnect=True)
