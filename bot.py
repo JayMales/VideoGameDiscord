@@ -1,7 +1,7 @@
 import discord,json,asyncio
 from discord.ext import commands
 import sys, traceback
-from key import KEY,client_id_key, client_secret_key
+from key import KEY
 
 public_channel = None
 
