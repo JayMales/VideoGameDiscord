@@ -1,6 +1,6 @@
 import discord,json,asyncio
 from discord.ext import commands
-import sys, traceback
+import sys, traceback,os
 from key import KEY, PREF
 
 public_channel = None
@@ -25,12 +25,14 @@ initial_extensions = ['cogs.template','cogs.memes','cogs.mod']
 bot = commands.Bot(command_prefix=get_prefix, description='A Rewrite Cog Example')
 
 if __name__ == '__main__':
-    for extension in initial_extensions:
-        try:
-            bot.load_extension(extension)
-        except Exception as e:
-            print(f'Failed to load extension {extension}.', file=sys.stderr)
-            traceback.print_exc()
+	for extension in initial_extensions:
+		try:
+			bot.load_extension(extension)
+		except Exception as e:
+			print(f'Failed to load extension {extension}.', file=sys.stderr)
+			traceback.print_exc()
+	if not os.path.exists("imgs/profilepics/welcomes/"):
+		os.makedirs("imgs/profilepics/welcomes/")
 			
 
 @bot.event
@@ -40,9 +42,6 @@ async def on_ready():
 	game = discord.Game("Rewrite Time Boii")
 	await bot.change_presence(activity=game)
 	print(f'Successfully logged in and booted...!')
-	for cchannel in bot.get_all_channels():
-		if type(cchannel) == discord.TextChannel:
-				global public_channel
-				public_channel = cchannel			
-
+	
+	
 bot.run(KEY, bot=True, reconnect=True)
