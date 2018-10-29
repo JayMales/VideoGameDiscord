@@ -11,7 +11,13 @@ class Mod:
 		# Puts user in default role (needs to be changed so it can be dynamic)
 		role = discord.utils.get(member.guild.roles, name="Unity")
 		await member.add_roles(role)
+		await self._postMyImg(member)
 		
+	@commands.command(name="welcome", aliases=["img"])
+	async def postWelcomeMyImg(self,ctx):
+		await self._postMyImg(ctx.author)
+	
+	async def _postMyImg(self,member):
 		# Greats ready to post in first text channel
 		public_channel = member.guild.text_channels[0]
 		
