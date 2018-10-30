@@ -20,7 +20,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-initial_extensions = ['cogs.template','cogs.memes','cogs.mod']
+initial_extensions = ['cogs.template','cogs.memes','cogs.mod','cogs.userManagement']
 
 bot = commands.Bot(command_prefix=get_prefix, description='A Rewrite Cog Example')
 
