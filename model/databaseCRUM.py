@@ -9,27 +9,40 @@ class Database:
 	async def selectAllUsers(self):
 		return await self.selectManyRows("SELECT * from user")
 		
-	async def selectAUser(self,ctx):
-		result =  await self.__selectAUser(ctx)
+	async def selectAUser(self,currUser):
+		result =  await self.__selectAUser(currUser)
 		if result is None:
-			await self.createUser(ctx)
-			result = await self.__selectAUser(ctx)
+			await self.createUser(currUser)
+			result = await self.__selectAUser(currUser)
 		return user.User(result)
 		
-	async def __selectAUser(self, ctx):
+	async def __selectAUser(self, currUser):
 		result =  await self.selectOneRow("SELECT * FROM user "+
-			"WHERE disUserId = "+str(ctx.author.id)+" AND guildId = "+
-			str(ctx.guild.id)+" LIMIT 1;")
+			"WHERE disUserId = "+str(currUser.id)+" AND guildId = "+
+			str(currUser.guild.id)+" LIMIT 1;")
 		return result
-				
-	async def createUser(self, ctx):
+	
+	async def updateSchmeckles(self, currUser, amount, plus):
 		async with aiosqlite.connect(self.dbloc) as db:
-			if await self.__selectAUser(ctx) is None:
+			cu = await self.selectAUser(currUser)
+			if plus:
+				cu.schmeckles += amount
+			else:
+				cu.schmeckles -= amount
+				
+			await db.execute("UPDATE user SET schmeckles = "+str(cu.schmeckles)+
+			" WHERE disUserId = "+str(cu.disUserId)+" AND guildId = "+str(cu.guildId))
+			await db.commit()
+			
+	
+	async def createUser(self, currUser):
+		async with aiosqlite.connect(self.dbloc) as db:
+			if await self.__selectAUser(currUser) is None:
 				await db.execute('INSERT INTO user '+
 				'(disUserId, guildId,schmeckles,xp,level)'+
-				'VALUES('+str(ctx.author.id)+','+str(ctx.guild.id)+',25,0,1)')
+				'VALUES('+str(currUser.id)+','+str(currUser.guild.id)+',25,0,1)')
 				await db.commit()
-				#return await self.selectAUser(ctx)
+				#return await self.selectAUser(currUser)
 			
 	async def selectOneRow(self, query):
 		async with aiosqlite.connect(self.dbloc) as db:
@@ -44,16 +57,16 @@ class Database:
 			rows = await cursor.fetchall()
 			await cursor.close()
 			return rows
-				
-				
+			
+	
 				
 #######################
 # CREATE TABLE user(userId INTEGER PRIMARY KEY AUTOINCREMENT,
-# disUserId INTEGER,guildId INTEGER,schmeckles INTEGER,xp INTEGER,level INTEGER);
+# disUserId INTEGER,guildId INTEGER,schmeckles INTEGER,xp INTEGER,level INTEGER, lastRoll real);
 #
-# CREATE TABLE transactions(transId INTEGER PRIMARY KEY AUTOINCREMENT,firstUser INTEGER NOT NULL,
-# secondUser INTEGER NOT NULL, amount INTEGER, date REAL,FOREIGN KEY (firstUser) REFERENCES user(userId),
-# FOREIGN KEY(secondUser) REFERENCES user(userId));
+# CREATE TABLE transactions(transId INTEGER PRIMARY KEY AUTOINCREMENT,payer INTEGER NOT NULL,
+# payee INTEGER NOT NULL, amount INTEGER, date REAL,FOREIGN KEY (payer) REFERENCES user(userId),
+# FOREIGN KEY(payee) REFERENCES user(userId));
 #
 # CREATE TABLE game(gameId INTEGER PRIMARY KEY AUTOINCREMENT,winner INTEGER NOT NULL, 
 # loser INTEGER NOT NULL, type TEXT, betTotal INTEGER, imgLoc text, date REAL,

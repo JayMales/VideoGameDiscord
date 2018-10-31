@@ -2,6 +2,8 @@ import discord,json,asyncio
 from discord.ext import commands
 import sys, traceback,os
 from key import KEY, PREF
+import discord.utils
+
 
 public_channel = None
 
@@ -19,6 +21,11 @@ def get_prefix(bot, message):
     # If we are in a guild, we allow for the user to mention us or use any of the prefixes in our list.
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
+def is_owner_check(message):
+    return message.author.id == '201235432644542464'
+
+def is_owner():
+    return commands.check(lambda ctx: is_owner_check(ctx.message))
 
 initial_extensions = ['cogs.template','cogs.memes','cogs.mod','cogs.userManagement']
 
