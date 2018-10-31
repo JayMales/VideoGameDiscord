@@ -12,7 +12,7 @@ class Database:
 	async def selectAUser(self,ctx):
 		result =  await self.__selectAUser(ctx)
 		if result is None:
-			createUser(ctx)
+			await self.createUser(ctx)
 			result = await self.__selectAUser(ctx)
 		return user.User(result)
 		
@@ -24,12 +24,12 @@ class Database:
 				
 	async def createUser(self, ctx):
 		async with aiosqlite.connect(self.dbloc) as db:
-			if await self.selectAUser(ctx) is None:
+			if await self.__selectAUser(ctx) is None:
 				await db.execute('INSERT INTO user '+
 				'(disUserId, guildId,schmeckles,xp,level)'+
 				'VALUES('+str(ctx.author.id)+','+str(ctx.guild.id)+',25,0,1)')
 				await db.commit()
-				return await self.selectAUser(ctx)
+				#return await self.selectAUser(ctx)
 			
 	async def selectOneRow(self, query):
 		async with aiosqlite.connect(self.dbloc) as db:
