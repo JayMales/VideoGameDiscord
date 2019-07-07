@@ -2,7 +2,7 @@ import discord,aiohttp,aiofiles
 from PIL import Image, ImageOps, ImageDraw,ImageFont
 from discord.ext import commands
 
-class Mod:
+class Mod(commands.Cog):
 
 	def __init__(self,bot):
 		self.bot = bot

@@ -2,7 +2,7 @@ import discord,random
 from discord.voice_client import VoiceClient
 from discord.ext import commands
 
-class Memes:
+class Memes(commands.Cog):
 	
 	def __init__(self,bot):
 		self.bot = bot
