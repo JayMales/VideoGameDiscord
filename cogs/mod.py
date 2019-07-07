@@ -7,6 +7,13 @@ class Mod:
 	def __init__(self,bot):
 		self.bot = bot
 	
+	@commands.command(name="kill", aliases=["logout"])
+	@commands.is_owner()
+	async def shutdown(self,ctx):
+		self.bot.sql.close()
+		await self.bot.sql.wait_closed()
+		await self.bot.logout()
+		
 	async def on_member_join(self,member):
 		# Puts user in default role (needs to be changed so it can be dynamic)
 		role = discord.utils.get(member.guild.roles, name="Unity")
@@ -14,8 +21,10 @@ class Mod:
 		await self._postMyImg(member)
 		
 	@commands.command(name="welcome", aliases=["img"])
-	async def postWelcomeMyImg(self,ctx):
-		await self._postMyImg(ctx.author)
+	async def postWelcomeMyImg(self,ctx, *, user : discord.Member = None):
+		if not user:
+			user = ctx.author
+		await self._postMyImg(user)
 	
 	async def _postMyImg(self,member):
 		# Greats ready to post in first text channel

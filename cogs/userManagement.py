@@ -1,6 +1,6 @@
 import discord
 import typing
-from model import databaseCRUM
+from model import mySqlCRUM
 from discord.ext import commands
 from key import PREF
 
@@ -9,7 +9,9 @@ class UserManagement:
 
 	def __init__(self,bot):
 		self.bot = bot
-		self.db = databaseCRUM.Database()
+		#self.db = databaseCRUM.Database()
+		self.db2 = mySqlCRUM.Database(bot)
+		#bot.run(self.db2.testing())
 		
 	@commands.command(name="create")
 	async def createTheUser(self, ctx):
