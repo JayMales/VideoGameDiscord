@@ -32,7 +32,7 @@ class Mod(commands.Cog):
 		
 		# Gets the user's profile picture and saves it.
 		async with aiohttp.ClientSession() as session:
-			async with session.get(member.avatar_url_as(format="png", size=128)) as resp:
+			async with session.get(str(member.avatar_url_as(format="png", size=128))) as resp:
 				f = await aiofiles.open('imgs/profilepics/'+str(member.id)+'.png', mode='wb')
 				await f.write(await resp.read())
 				await f.close()
