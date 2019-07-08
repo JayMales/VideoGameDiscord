@@ -1,5 +1,6 @@
 import aiosqlite
 from model import user
+from datetime import datetime, timezone,timedelta
 
 class Database:
 
@@ -33,16 +34,34 @@ class Database:
 			await db.execute("UPDATE user SET schmeckles = "+str(cu.schmeckles)+
 			" WHERE disUserId = "+str(cu.disUserId)+" AND guildId = "+str(cu.guildId))
 			await db.commit()
+            
+	async def updateDig(self, currUser, amount, plus):
+		theTime = datetime.now() + timedelta(minutes=30)
+		timeIn30 = theTime.strftime("%Y-%m-%d %H:%M:%S")
+		async with aiosqlite.connect(self.dbloc) as db:
+			cu = await self.selectAUser(currUser)
+			if plus:
+				cu.schmeckles += amount
+			else:
+				cu.schmeckles -= amount
+				
+			await db.execute("UPDATE user SET schmeckles = "+str(cu.schmeckles)+
+			", lastRoll = '"+timeIn30+"' WHERE disUserId = "+str(cu.disUserId)+" AND guildId = "+str(cu.guildId))
+			await db.commit()
 			
 	
 	async def createUser(self, currUser):
+		theTime = datetime.now() - timedelta(minutes=35)
+		timeIn30 = theTime.strftime("%Y-%m-%d %H:%M:%S")
+		print(timeIn30)
 		async with aiosqlite.connect(self.dbloc) as db:
 			if await self.__selectAUser(currUser) is None:
 				await db.execute('INSERT INTO user '+
-				'(disUserId, guildId,schmeckles,xp,level)'+
-				'VALUES('+str(currUser.id)+','+str(currUser.guild.id)+',25,0,1)')
+				'(disUserId, guildId,schmeckles,xp,level,lastRoll)'+
+				'VALUES('+str(currUser.id)+','+str(currUser.guild.id)+',25,0,1,"'+timeIn30+'")')
 				await db.commit()
-				#return await self.selectAUser(currUser)
+				#return await self.selectAUser(currUser) 
+                #2004-08-19 18:51:06 %y-%m-%d %H:%M;%S
 			
 	async def selectOneRow(self, query):
 		async with aiosqlite.connect(self.dbloc) as db:
@@ -62,28 +81,13 @@ class Database:
 				
 #######################
 # CREATE TABLE user(userId INTEGER PRIMARY KEY AUTOINCREMENT,
-# disUserId INTEGER,guildId INTEGER,schmeckles INTEGER,xp INTEGER,level INTEGER, lastRoll real);
+# disUserId INTEGER,guildId INTEGER,schmeckles INTEGER,xp INTEGER,level INTEGER, lastRoll TEXT);
 #
 # CREATE TABLE transactions(transId INTEGER PRIMARY KEY AUTOINCREMENT,payer INTEGER NOT NULL,
-# payee INTEGER NOT NULL, amount INTEGER, date REAL,FOREIGN KEY (payer) REFERENCES user(userId),
-# FOREIGN KEY(payee) REFERENCES user(userId));
+# payee INTEGER NOT NULL, amount INTEGER, date TEXT,FOREIGN KEY (payer) REFERENCES user(userId), FOREIGN KEY(payee) REFERENCES user(userId));
 #
-# CREATE TABLE game(gameId INTEGER PRIMARY KEY AUTOINCREMENT,winner INTEGER NOT NULL, 
-# loser INTEGER NOT NULL, type TEXT, betTotal INTEGER, imgLoc text, date REAL,
+# CREATE TABLE game(gameId INTEGER PRIMARY KEY AUTOINCREMENT,winner INTEGER NOT NULL, loser INTEGER NOT NULL, type TEXT, betTotal INTEGER, imgLoc text, date TEXT,
 # tie INTEGER,FOREIGN KEY (winner) REFERENCES user(userId), FOREIGN KEY(loser) REFERENCES user(userId));
 #
 #
-# CREATE TABLE IF NOT EXISTS user(userId INT(6) AUTO_INCREMENT PRIMARY KEY, disUserId INT(20), guildId INT(20),schmeckles INT(20),xp INT(20),level INT(10), lastRoll TIMESTAMP) ENGINE=INNODB;
-#
-# CREATE TABLE IF NOT EXISTS transactions(transId INT(6) AUTO_INCREMENT PRIMARY KEY, payer INT(6) NOT NULL, payee INT(6) NOT NULL, amount INT(20), date TIMESTAMP,
-#                           INDEX (payer),
-#                           INDEX (payee),
-#                           FOREIGN KEY(payer) REFERENCES user(userId) ON DELETE CASCADE,
-#                           FOREIGN KEY(payee) REFERENCES user(userId) ON DELETE CASCADE) ENGINE=INNODB;
-#                          
-# CREATE TABLE IF NOT EXISTS game(gameId INT(6) AUTO_INCREMENT PRIMARY KEY, winner INT(6) NOT NULL, loser INT(6) NOT NULL, type VARCHAR(32), betTotal INT(20), imgLoc VARCHAR(32), date TIMESTAMP, tie  VARCHAR(1),
-#                   INDEX (winner),
-#                   INDEX (loser),
-#                   FOREIGN KEY (winner) REFERENCES user(userId) ON DELETE CASCADE,
-#                   FOREIGN KEY (loser) REFERENCES user(userId) ON DELETE CASCADE) ENGINE=INNODB;
-#######################
+######################

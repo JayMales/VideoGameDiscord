@@ -3,6 +3,7 @@ import typing
 from model import databaseCRUM
 from discord.ext import commands
 from key import PREF
+from datetime import datetime, timedelta
 import random
 
 
@@ -34,7 +35,14 @@ class UserManagement(commands.Cog):
     async def dig(self,ctx):
         user = await self.db.selectAUser(ctx.author)
         amount = random.randint(1,25)
-        await self.db.updateSchmeckles(ctx.author, amount,True)
+        lastRoll = datetime.strptime(user.lastRoll,"%Y-%m-%d %H:%M:%S")
+        timenow = datetime.strptime(str(datetime.now())[:-7],"%Y-%m-%d %H:%M:%S")
+        if lastRoll > timenow:
+            nextRoll = lastRoll - timenow
+            nextRoll = divmod(nextRoll.days * 86400 + nextRoll.seconds, 60)
+            await ctx.send("Try again in: "+str(nextRoll[0])+" Minutes and "+str(nextRoll[1])+" Seconds.")
+            return
+        await self.db.updateDig(ctx.author, amount,True)
         await ctx.send("You went digging for some schmeckles and found "+
             str(amount)+" schmeckles!")
 		
