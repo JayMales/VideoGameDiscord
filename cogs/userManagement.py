@@ -58,7 +58,12 @@ class UserManagement(commands.Cog):
             await ctx.send("You sent "+str(amount)+" to "+member[0].name+".")
         else:
             await ctx.send("You do not have the funds to send that.")
-			
+	
+    @commands.command(name="createDB", aliases=["createdb"])
+    async def createDB(self,ctx):
+        await self.db.createDatabase()
+        await ctx.send("Created the database if it was created already")
+        
     @commands.command(name="adminpay", aliases=["adgive","adpay","admingive"])	
     @commands.is_owner()
     async def adpay(self, ctx, member: commands.Greedy[discord.Member], *, amount: int):
@@ -75,6 +80,7 @@ class UserManagement(commands.Cog):
         if isinstance(error, commands.NotOwner):
             await ctx.send("Nice try buddy, -10 for you")
             await self.db.updateSchmeckles(ctx.author, 10,False)
+           
 	
 def setup(bot):
 	bot.add_cog(UserManagement(bot))

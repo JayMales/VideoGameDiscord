@@ -16,7 +16,7 @@ class Database:
 			await self.createUser(currUser)
 			result = await self.__selectAUser(currUser)
 		return user.User(result)
-		
+
 	async def __selectAUser(self, currUser):
 		result =  await self.selectOneRow("SELECT * FROM user "+
 			"WHERE disUserId = "+str(currUser.id)+" AND guildId = "+
@@ -77,8 +77,19 @@ class Database:
 			await cursor.close()
 			return rows
 			
-	
-				
+	async def createDatabase(self):
+		async with aiosqlite.connect(self.dbloc) as db:
+			await db.execute('create table if not exists user(userId INTEGER PRIMARY KEY AUTOINCREMENT, ' +
+                'disUserId INTEGER,guildId INTEGER,schmeckles INTEGER,xp INTEGER,level INTEGER, lastRoll TEXT);')
+			await db.commit()
+			await db.execute('create table if not exists transactions(transId INTEGER PRIMARY KEY AUTOINCREMENT,payer INTEGER NOT NULL ,'+ 
+            'payee INTEGER NOT NULL, amount INTEGER, date TEXT,FOREIGN KEY (payer) REFERENCES user(userId), FOREIGN KEY(payee) REFERENCES user(userId));')
+
+			await db.commit()
+			await db.execute('create table if not exists game(gameId INTEGER PRIMARY KEY AUTOINCREMENT,winner INTEGER NOT NULL, loser INTEGER NOT NULL, type TEXT, betTotal INTEGER, imgLoc text, date TEXT, '+
+            ' tie INTEGER,FOREIGN KEY (winner) REFERENCES user(userId), FOREIGN KEY(loser) REFERENCES user(userId));')
+			await db.commit()
+            
 #######################
 # CREATE TABLE user(userId INTEGER PRIMARY KEY AUTOINCREMENT,
 # disUserId INTEGER,guildId INTEGER,schmeckles INTEGER,xp INTEGER,level INTEGER, lastRoll TEXT);
